@@ -1,6 +1,7 @@
 import React from 'react';
 import { Alert, Col, Form, Row, Spinner } from 'react-bootstrap';
 import { RouteComponentProps } from 'react-router';
+import { Constants } from './Constants';
 import { HttpClient } from './HttpClient';
 import { Item } from './serverService';
 
@@ -9,7 +10,7 @@ interface Props {
 }
 
 class QuickEntry extends React.Component<RouteComponentProps<Props>, { status: string, payload: Item | undefined, error: Error | undefined}> {
-    http: HttpClient = new HttpClient("https://localhost:5001/api/");
+    http: HttpClient = new HttpClient(Constants.ApiUrl);
 
     constructor(props: RouteComponentProps<Props>) {
         super(props);

@@ -6,6 +6,10 @@ interface HttpResponse<T> extends Response {
 export class HttpClient {
     baseUri: string;
 
+    static getFullHost(): string {
+        return window.location.protocol + "//" + window.location.hostname;
+    }
+
     constructor(baseUri: string) {
         this.baseUri = baseUri;
     }

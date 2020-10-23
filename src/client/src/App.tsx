@@ -4,6 +4,7 @@ import { Route, Router } from 'react-router-dom';
 import { Container, Form, FormControl, Nav, Navbar } from 'react-bootstrap';
 import QuickEntry from './QuickEntry';
 import { createBrowserHistory } from 'history';
+import { HttpClient } from './HttpClient';
 
 const history = createBrowserHistory();
 
@@ -42,7 +43,7 @@ class App extends React.Component<any, {value: string}> {
 
   handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    window.location.href = `http://localhost:3000/quickentry/${this.state.value}`;
+    window.location.href = `${HttpClient.getFullHost()}/quickentry/${this.state.value}`;
   }
 }
 
