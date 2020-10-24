@@ -13,7 +13,6 @@ namespace HomeInventory.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [EnableCors("CorsPolicy")]
     public class InventoryController : ControllerBase
     {
         private readonly MainDbContext db;
@@ -86,19 +85,21 @@ namespace HomeInventory.Controllers
         }
 
         [HttpPatch("items/{barcodeNum}")]
-        public async Task<IActionResult> UpdateItem(string barcodeNum, Item inventoryItem)
+        public async Task<IActionResult> UpdateItem(string barcodeNum, EditItemDto inventoryItem)
         {
             var existingItem = await db.Items.FindAsync(barcodeNum);
 
             if (existingItem == null)
             {
-                return NotFound();
+                return NotFound(new { Message = $"Item could not be found my barcode Num: {barcodeNum}" });
             }
 
             existingItem.Name = inventoryItem.Name;
             existingItem.Quantity = inventoryItem.Quantity;
             existingItem.Location = inventoryItem.Location;
-
+            existingItem.UOMName = inventoryItem.UOM;
+            existingItem.Size = inventoryItem.Size;
+            
             db.Items.Update(existingItem);
             await db.SaveChangesAsync();
 

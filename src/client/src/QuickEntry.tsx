@@ -1,21 +1,22 @@
 import React from 'react';
-import { Alert, Col, Form, Row, Spinner } from 'react-bootstrap';
+import { Alert, Button, Col, Form, Spinner } from 'react-bootstrap';
 import { RouteComponentProps } from 'react-router';
 import { Constants } from './Constants';
 import { HttpClient } from './HttpClient';
-import { Item } from './serverService';
+import { FormState, FormStatus, Item } from './InventoryTypes';
 
 interface Props {
     barcode: string
 }
 
-class QuickEntry extends React.Component<RouteComponentProps<Props>, { status: string, payload: Item | undefined, error: Error | undefined}> {
+class QuickEntry extends React.Component<RouteComponentProps<Props>, FormState<Item>> {
     http: HttpClient = new HttpClient(Constants.ApiUrl);
 
     constructor(props: RouteComponentProps<Props>) {
         super(props);
-        this.state = { status: 'loading', payload: undefined, error: undefined };
+        this.state = { status: FormStatus.Loading, payload: undefined, error: undefined };
         this.handleChange = this.handleChange.bind(this);
+        this.saveItem = this.saveItem.bind(this);
     }
 
     handleChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -36,17 +37,45 @@ class QuickEntry extends React.Component<RouteComponentProps<Props>, { status: s
     load() {
         this.http.get<Item>(`Inventory/items/${this.props.match.params.barcode}`)
             .then(r => {
-                if (r.status === 200) {
-                    this.setState({status: 'loaded', payload: r.parsedBody})
+                if (r.ok) {
+                    this.setState({status: FormStatus.Loaded, payload: r.parsedBody})
                 }
-                else {
-                    this.setState({status: 'loaded', payload: {barcodeNum: this.props.match.params.barcode, name: ''}})
+                else if (r.status === 404) {
+                    // Item does not already exist, create it
+                    this.http.post<Item>("Inventory/items", { barcodeNum: this.props.match.params.barcode })
+                        .then(r => {
+                            if (r.ok) {
+                                this.setState({status: FormStatus.Loaded, payload: r.parsedBody })
+                            }
+                            else {
+                                this.setState({status: FormStatus.Error, error: new Error("Could not create a new Item")});
+                            }
+                        })
+                        .catch(e => {
+                            this.setState({status: FormStatus.Error, error: e})
+                        });
                 }
             })
             .catch(e => { 
                 console.error(e);
-                this.setState({status: 'error', error: e})
+                this.setState({status: FormStatus.Error, error: e})
             });
+    }
+
+    saveItem(event: React.MouseEvent<HTMLElement>) {
+        event.preventDefault();
+        this.http.patch(`Inventory/items/${this.state.payload!.barcodeNum}`, this.state.payload)
+            .then(r => {
+                    if (r.ok) {
+                        console.log("Saved item!");
+                    } 
+                    else {
+                        console.log("Didn't save good");
+                    }
+                })
+                .catch(e => {
+                    this.setState({status: FormStatus.Error, error: e});
+                });
     }
 
     componentDidMount() {
@@ -63,8 +92,8 @@ class QuickEntry extends React.Component<RouteComponentProps<Props>, { status: s
                     </Spinner>
                 }
                 { this.state.status === 'loaded' && 
-                    <Form>
-                        <Row>
+                    <Form action='none'>
+                        <Form.Row>
                             <Col>
                                 <Form.Group>
                                     <Form.Label>Barcode Num:</Form.Label>
@@ -77,10 +106,19 @@ class QuickEntry extends React.Component<RouteComponentProps<Props>, { status: s
                                     <Form.Control name="name" placeholder="Name" value={this.state.payload!.name} onChange={this.handleChange} />
                                 </Form.Group>
                             </Col>
-                        </Row> 
+                        </Form.Row> 
+                        <Form.Row>
+                            <Col>
+                                <Form.Group>
+                                    <Form.Label></Form.Label>
+                                    <Form.Control type="number" name="quantity" value={this.state.payload!.quantity} onChange={this.handleChange} />
+                                </Form.Group>
+                            </Col>
+                        </Form.Row>
+                        <Button type="submit" onClick={this.saveItem} variant='success'>Save</Button>
                     </Form> 
                 }
-                { this.state.status === 'error' &&
+                { this.state.status === FormStatus.Error &&
                     <Alert variant="danger">{this.state.error!.message}</Alert>
                 }
             </div>
