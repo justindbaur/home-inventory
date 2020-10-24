@@ -31,7 +31,15 @@ namespace HomeInventory
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy", builder =>
+                {
+                    builder.AllowAnyHeader();
+                    builder.AllowAnyMethod();
+                    builder.AllowAnyOrigin();
+                });
+            });
             services.AddControllers();
 
             services.AddDbContext<MainDbContext>(b =>
@@ -67,9 +75,11 @@ namespace HomeInventory
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Home Inventory v1"));
             }
 
+            // app.UseHttpsRedirection();
+            
             app.UseRouting();
 
-            app.UseCors(b => b.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
+            app.UseCors("CorsPolicy");
 
             app.UseEndpoints(endpoints =>
             {

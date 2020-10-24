@@ -7,11 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 using HomeInventory.Shared.Entities;
 using HomeInventory.Services;
 using HomeInventory.Shared.Dtos;
+using Microsoft.AspNetCore.Cors;
 
 namespace HomeInventory.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [EnableCors("CorsPolicy")]
     public class InventoryController : ControllerBase
     {
         private readonly MainDbContext db;

@@ -19,6 +19,7 @@ export class HttpClient {
             console.log(r);
             return r;
         });
+
         console.log(response);
         if (response.ok) {
             response.parsedBody = await response.json();
@@ -48,6 +49,6 @@ export class HttpClient {
     }
 
     private getRequestInit(): RequestInit {
-        return { headers: { 'Content-Type': 'application/json', 'Origin': 'http://localhost:3000/' } };
+        return { headers: { 'Content-Type': 'application/json', 'Origin': 'http://localhost:3000/', 'Accept': 'application/json' } };
     }
 }
