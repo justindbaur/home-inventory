@@ -15,5 +15,6 @@ export interface Item {
     name: string,
     quantity: number,
     location: string,
-    size: number
+    size: number,
+    uom: string
 }

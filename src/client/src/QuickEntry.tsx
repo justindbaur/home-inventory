@@ -64,13 +64,21 @@ class QuickEntry extends React.Component<RouteComponentProps<Props>, FormState<I
 
     saveItem(event: React.MouseEvent<HTMLElement>) {
         event.preventDefault();
-        this.http.patch(`Inventory/items/${this.state.payload!.barcodeNum}`, this.state.payload)
+        this.http.patch(`Inventory/items/${this.state.payload!.barcodeNum}`, 
+            {
+                name: this.state.payload!.name,
+                quantity: this.state.payload!.quantity,
+                location: this.state.payload!.location,
+                size: this.state.payload!.size,
+                uom: this.state.payload!.uom
+            })
             .then(r => {
                     if (r.ok) {
                         console.log("Saved item!");
                     } 
                     else {
-                        console.log("Didn't save good");
+                        console.log(r);
+                        r.json().then(r => console.log(r));
                     }
                 })
                 .catch(e => {
@@ -116,10 +124,12 @@ class QuickEntry extends React.Component<RouteComponentProps<Props>, FormState<I
                             </Col>
                         </Form.Row>
                         <Button type="submit" onClick={this.saveItem} variant='success'>Save</Button>
-                    </Form> 
+                    </Form>
                 }
                 { this.state.status === FormStatus.Error &&
-                    <Alert variant="danger">{this.state.error!.message}</Alert>
+                    <div>
+                        <Alert variant="danger">{this.state.error!.message}</Alert>
+                    </div>
                 }
             </div>
             

@@ -5,11 +5,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": ".NET 3.1 Server Launch",
+            "name": ".NET 5.0 Server Launch",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "buildserver",
-            "program": "${workspaceFolder}/src/server/bin/Debug/netcoreapp3.1/server.dll",
+            "program": "${workspaceFolder}/src/server/bin/Debug/net5.0/server.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/server",
             "stopAtEntry": false,

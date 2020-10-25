@@ -32,7 +32,11 @@ namespace HomeInventory
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors();
-            services.AddControllers();
+            services.AddControllers()
+                .AddJsonOptions(options => 
+                {
+                    
+                });
 
             services.AddDbContext<MainDbContext>(b =>
             {
