@@ -36,11 +36,12 @@ export class HttpClient {
         return await this.enrich(response);
     }
 
+    delete(requestUri: string): Promise<Response> {
+        return this.simpleSend(requestUri, 'DELETE');    
+    }
+
     private async send(input: RequestInfo, init: RequestInit | undefined): Promise<Response> {
-        console.log(input);
-        console.log(init);
         const response = fetch(input, init);
-        console.log(response);
         return response;
     }
 
@@ -52,7 +53,6 @@ export class HttpClient {
             return this.send(this.fullUri(requestUri), {method: method, body: JSON.stringify(body), headers: this.defaultRequestHeaders});
         }
     }
-
 
     private async enrich<T>(response: HttpResponse<T>): Promise<HttpResponse<T>> {
         if (response.ok) {

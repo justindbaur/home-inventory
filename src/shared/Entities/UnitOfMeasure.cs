@@ -14,7 +14,7 @@ namespace HomeInventory.Shared.Entities
         public bool IsConvertible { get; set; }
 
 
-        public static IEnumerable<UnitOfMeasure> DefaultItems => new List<UnitOfMeasure>
+        public static readonly List<UnitOfMeasure> DefaultItems = new List<UnitOfMeasure>
         {
             new UnitOfMeasure
             {

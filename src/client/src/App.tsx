@@ -1,10 +1,12 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import { Route, Router } from 'react-router-dom';
-import { Container, Form, FormControl, Nav, Navbar } from 'react-bootstrap';
+import { Form, FormControl, Nav, Navbar } from 'react-bootstrap';
 import QuickEntry from './QuickEntry';
 import { createBrowserHistory } from 'history';
 import { HttpClient } from './HttpClient';
+import { InventoryList } from './InventoryList';
+import { InventoryItem } from './InventoryItem';
 
 const history = createBrowserHistory();
 
@@ -31,9 +33,11 @@ class App extends React.Component<any, {value: string}> {
               </Form>
             </Navbar.Collapse>
           </Navbar>
-          <Container fluid="md" className="pt-4">
+          <div>
             <Route path="/quickentry/:barcode" component={QuickEntry}/>
-          </Container>
+            <Route path="/inventory" exact component={InventoryList} />
+            <Route path="/inventory/:barcodeNum" component={InventoryItem} />
+          </div>
         </div>
       </Router>
     );

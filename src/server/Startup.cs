@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using HomeInventory.Contexts;
 using HomeInventory.Handlers;
@@ -35,7 +36,7 @@ namespace HomeInventory
             services.AddControllers()
                 .AddJsonOptions(options => 
                 {
-                    
+                    options.JsonSerializerOptions.NumberHandling = JsonNumberHandling.AllowReadingFromString;
                 });
 
             services.AddDbContext<MainDbContext>(b =>

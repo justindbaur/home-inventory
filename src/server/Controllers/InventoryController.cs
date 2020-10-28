@@ -67,7 +67,7 @@ namespace HomeInventory.Controllers
                 BarcodeNum = createItem.BarcodeNum,
                 Quantity = 1,
                 Name = "",
-                UOMName = "Ounce"
+                UOMName = UnitOfMeasure.DefaultItems[0].Name
             };
 
             var addresult = await db.Items.AddAsync(item);
