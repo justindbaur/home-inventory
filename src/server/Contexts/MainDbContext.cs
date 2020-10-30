@@ -12,20 +12,35 @@ namespace HomeInventory.Contexts
         }
 
 #nullable disable
-        public DbSet<Item> Items { get; set; }
-        public DbSet<ItemInstance> ItemInstances { get; set; }
-        public DbSet<UnitOfMeasure> UnitOfMeasures { get; set; }
-        public DbSet<UnitOfMeasureConversion> UnitOfMeasureConversions { get; set; }
+        public DbSet<Part> Parts { get; set; }
+        public DbSet<PartTran> PartTrans { get; set; }
+        public DbSet<User> Users { get; set; }
 #nullable enable
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.Entity<Item>();
+            builder.Entity<Part>()
+                .HasKey(p => new { p.Company, p.Id });
 
-            builder.Entity<UnitOfMeasure>()
-                .HasData(
-                    UnitOfMeasure.DefaultItems
-                );
+            builder.Entity<PartTran>()
+                .HasKey(p => new { p.Company, p.TranId });
+
+            builder.Entity<PartTran>()
+                .HasOne(p => p.Part)
+                .WithMany(p => p.PartTrans)
+                .HasForeignKey(p => new { p.Company, p.PartId });
+
+            builder.Entity<PartTran>()
+                .HasOne(p => p.EntryUser)
+                .WithMany(u => u.PartTrans)
+                .HasForeignKey(p => new { p.Company, p.EntryUserName });
+
+            var userEntityBuilder = builder.Entity<User>();
+            userEntityBuilder.HasKey(u => new { u.Company, u.UserName });
+            userEntityBuilder.HasData(new[] 
+            {
+                new User { Company = "HOME", UserName = "jdbaur" }
+            });
         }
     }
 }

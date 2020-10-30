@@ -11,6 +11,7 @@ export abstract class BaseFormComponent<P, T> extends React.Component<RouteCompo
         this.state = { status: FormStatus.Loading };
         this.handleChange = this.handleChange.bind(this);
         this.handleSave = this.handleSave.bind(this);
+        this.handleDelete = this.handleDelete.bind(this);
 
         this.client = new HttpClient(Constants.ApiUrl);
     }
@@ -18,19 +19,22 @@ export abstract class BaseFormComponent<P, T> extends React.Component<RouteCompo
     protected client: HttpClient;
 
     protected handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-        console.log(event);
         const target = event.target;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
 
+        this.updatePayload(name, value);
+    }
+
+    protected updatePayload(name: string, value: string | boolean | number) {
         const tempPayload = this.state.payload;
 
-        // @ts-ignore: I have to do it this way for now.
+        // @ts-ignore
         tempPayload[name] = value;
 
         this.setState({
             payload: tempPayload
-        });
+        })
     }
 
     handleSave(event: React.MouseEvent<HTMLElement>): void | undefined {
@@ -55,7 +59,7 @@ export abstract class BaseFormComponent<P, T> extends React.Component<RouteCompo
                             <Form.Row>
                                 <ButtonGroup className="mr-2">
                                     <Button variant="success" onClick={this.handleSave}>Save</Button>
-                                    <Button variant="danger">Delete</Button>
+                                    <Button variant="danger" onClick={this.handleDelete}>Delete</Button>
                                 </ButtonGroup>
                                 <br />
                             </Form.Row>

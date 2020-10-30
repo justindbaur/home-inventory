@@ -11,12 +11,14 @@ export class InventoryList extends BaseListComponent<Item> {
     }
 
     componentDidMount() {
-        this.client.get<Item[]>("Inventory/items").then(r => {
-            if (r.ok) {
-                this.setState({status: 'loaded', items: r.parsedBody});
-            } else {
-                this.setState({status: 'error', error: new Error('Could not load items')});
-            }
+        this.client.get<Item[]>("Inventory/items")
+            .then(r => {
+                console.log(r);
+                if (r.ok) {
+                    this.setState({status: 'loaded', items: r.parsedBody});
+                } else {
+                    this.setState({status: 'error', error: new Error('Could not load items')});
+                }
         })
         .catch(e => this.setState({status: 'error', error: e}));
     }

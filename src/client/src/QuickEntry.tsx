@@ -1,6 +1,7 @@
 import React from 'react';
 import { Col, Form } from 'react-bootstrap';
 import { BaseFormComponent } from './BaseFormComponent';
+import { Quantity } from './components/Quantity';
 import { HttpClient } from './HttpClient';
 import { FormStatus, Item } from './InventoryTypes';
 
@@ -93,7 +94,7 @@ class QuickEntry extends BaseFormComponent<{barcode: string}, Item> {
                     <Col>
                         <Form.Group>
                             <Form.Label>Quantity</Form.Label>
-                            <Form.Control type="number" name="quantity" value={this.state.payload!.quantity} onChange={this.handleChange} />
+                            <Quantity value={this.state.payload!.quantity} onValueChange={v => this.updatePayload("quantity", v)} />
                         </Form.Group>
                     </Col>
                     <Col>

@@ -2,6 +2,7 @@ import React from "react";
 import { Col, Form, FormControl } from "react-bootstrap";
 import { BaseFormComponent } from "./BaseFormComponent";
 import { Quantity } from "./components/Quantity";
+import { HttpClient } from "./HttpClient";
 import { FormStatus, Item } from "./InventoryTypes";
 
 export class InventoryItem extends BaseFormComponent<{ barcodeNum: string }, Item> {
@@ -10,15 +11,21 @@ export class InventoryItem extends BaseFormComponent<{ barcodeNum: string }, Ite
             .then(r => this.setState({status: FormStatus.Loaded, payload: r.parsedBody}));
     }
 
+    handleDelete() {
+        this.client.delete(`Inventory/items/${this.props.match.params.barcodeNum}`)
+            .then(r =>{ 
+                if (r.status === 204) {
+                    window.location.href = HttpClient.getFullHost() + "/Inventory";
+                } else {
+                    this.setState({ status: FormStatus.Error, error: new Error("Delete failed")});
+                }
+            })
+            .catch(e => this.setState({ status: FormStatus.Error, error: e}));
+    }
+
     componentDidMount() {
         this.client.get<Item>(`Inventory/items/${this.props.match.params.barcodeNum}`)
             .then(r => this.setState({status: FormStatus.Loaded, payload: r.parsedBody}));
-    }
-
-    handleQuantity(num: number | string | undefined) {
-        const tempPayload = this.state.payload!;
-        tempPayload.quantity = tempPayload.quantity + +num!;
-        this.setState({ status: FormStatus.Loaded , payload: tempPayload });
     }
 
     renderForm() {
@@ -42,7 +49,7 @@ export class InventoryItem extends BaseFormComponent<{ barcodeNum: string }, Ite
                     <Col>
                         <Form.Group>
                             <Form.Label>Quantity</Form.Label>
-                            <Quantity name="quantity" value={this.state.payload!.quantity} onChange={this.handleChange} />
+                            <Quantity value={this.state.payload!.quantity} onValueChange={v => this.updatePayload("quantity", v)} />
                         </Form.Group>
                     </Col>
                     <Col>

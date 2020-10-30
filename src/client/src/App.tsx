@@ -7,6 +7,7 @@ import { createBrowserHistory } from 'history';
 import { HttpClient } from './HttpClient';
 import { InventoryList } from './InventoryList';
 import { InventoryItem } from './InventoryItem';
+import { Entry } from './Entry';
 
 const history = createBrowserHistory();
 
@@ -37,6 +38,7 @@ class App extends React.Component<any, {value: string}> {
             <Route path="/quickentry/:barcode" component={QuickEntry}/>
             <Route path="/inventory" exact component={InventoryList} />
             <Route path="/inventory/:barcodeNum" component={InventoryItem} />
+            <Route path="/entry" component={Entry} />
           </div>
         </div>
       </Router>

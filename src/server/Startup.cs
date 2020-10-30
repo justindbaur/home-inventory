@@ -5,8 +5,6 @@ using System.Net.Http.Headers;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using HomeInventory.Contexts;
-using HomeInventory.Handlers;
-using HomeInventory.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -43,18 +41,6 @@ namespace HomeInventory
             {
                 b.UseSqlite("Data Source=main.db;");
             });
-
-            var nuetrinoSettings = Configuration.GetSection("NeutrinoSettings");
-            services.AddHttpClient<IConversionService, ConversionService>(b => 
-            {
-                b.BaseAddress = new Uri(nuetrinoSettings["BaseUri"]);
-                b.DefaultRequestHeaders.Add("user-id", nuetrinoSettings["UserId"]);
-                b.DefaultRequestHeaders.Add("api-key", nuetrinoSettings["ApiKey"]);
-                b.DefaultRequestHeaders.Add("output-case", "camel");
-            })
-                .AddHttpMessageHandler<ConversionHandler>();
-
-            services.AddTransient<ConversionHandler>();
 
             services.AddSwaggerGen(c =>
             {
