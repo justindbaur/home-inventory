@@ -46,7 +46,9 @@ namespace HomeInventory.Controllers
         {
             var part = new Part
             {
-                Id = createPart.Id
+                Company = createPart.Company,
+                Id = createPart.Id,
+                Description = createPart.Description
             };
 
             var addresult = await db.Parts.AddAsync(part);
@@ -58,15 +60,15 @@ namespace HomeInventory.Controllers
 
             await db.SaveChangesAsync();
 
-            var createdPart = await db.Parts.FindAsync(part.Id);
+            var createdPart = await db.Parts.FindAsync(part.Company, part.Id);
 
-            return Created($"api/PartSvc/parts/{part.Id}", createdPart);
+            return Created($"api/PartSvc/Parts/({part.Company},{part.Id})", createdPart);
         }
 
-        [HttpPatch("Parts/{id}")]
-        public async Task<IActionResult> UpdatePart(string id, EditPartDto editPart)
+        [HttpPatch("Parts/({company},{id})")]
+        public async Task<IActionResult> UpdatePart(string company, string id, EditPartDto editPart)
         {
-            var existingPart = await db.Parts.FindAsync(id);
+            var existingPart = await db.Parts.FindAsync(company, id);
 
             if (existingPart == null)
             {
@@ -83,10 +85,10 @@ namespace HomeInventory.Controllers
             return Ok(existingPart);
         }
 
-        [HttpDelete("Parts/{id}")]
-        public async Task<IActionResult> DeletePart(string id)
+        [HttpDelete("Parts/({company},{id})")]
+        public async Task<IActionResult> DeletePart(string company, string id)
         {
-            var existingPart = await db.Parts.FindAsync(id);
+            var existingPart = await db.Parts.FindAsync(company, id);
 
             if (existingPart == null)
             {

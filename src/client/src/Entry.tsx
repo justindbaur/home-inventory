@@ -1,24 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { Button, Col, Container, Form, Modal } from "react-bootstrap";
+import { Button, Col, Container, Form } from "react-bootstrap";
+import { Quantity } from "./components/Quantity";
 import { Constants } from "./Constants";
 import { HttpClient } from "./HttpClient";
-
-interface User {
-    username: string,
-    name: string
-}
-
-interface Part {
-    id: string,
-    description: string
-}
+import { Part, PartTran, User } from "./InventoryTypes";
+import { QuickPartEntry } from "./QuickPartEntry";
 
 export const Entry: React.FC = () => {
     const [user, setUser] = useState<User>();
     const [users, setUsers] = useState<User[]>([]);
-    const [company, setCompany] = useState("");
-    const [part, setPart] = useState({ id: "", description: "" });
+    const [part, setPart] = useState<Part>({ company: "HOME", id: "", description: "", typeCode: "" });
+    const [adjustQuantity, setAdjustQuantity] = useState(1);
     const [showModal, setShowModal] = useState(false);
+    const [isCheckIn, setIsCheckIn] = useState(true);
+
 
     const client = new HttpClient(Constants.ApiUrl);
 
@@ -38,13 +33,16 @@ export const Entry: React.FC = () => {
     }, [setUsers]);
 
     const partKeyDown = (e: React.KeyboardEvent<HTMLInputElement>): void | undefined => {
-        if (e.key === "Enter") {
+        if (e.key === "Enter" || e.key === "Tab") {
             // Search for part
-            client.get<Part>(`PartSvc/Parts/(${company},${part.id})`)
+            client.get<Part>(`PartSvc/Parts/(${part.company},${part.id})`)
                 .then(r => {
                     if (r.ok) {
+                        console.log("Found Existing part");
+                        console.log(r.parsedBody);
                         setPart(r.parsedBody!);
                     } else if (r.status === 404) {
+                        console.log("No existing part found, showing create screen");
                         setShowModal(true);
                     }
                 })
@@ -52,6 +50,32 @@ export const Entry: React.FC = () => {
                     console.log(e);
                 });
         }
+    }
+
+    const createPart = (part: Part) => {
+        client.post<Part>(`PartSvc/Parts`, part)
+            .then(r => {
+                if (r.ok) {
+                    console.log("Part created.");
+                    console.log(part);
+                    setPart(part);
+                }
+            });
+        setShowModal(false);
+    }
+
+    const handleClose = () => {
+        setShowModal(false);
+        // 😊
+
+    }
+
+    const toggleMode = () => {
+        console.log("Toggling mode");
+        const value = isCheckIn ? 1 : -1;
+        console.log(value);
+        setAdjustQuantity(value);
+        setIsCheckIn(!isCheckIn);
     }
 
     return (
@@ -66,7 +90,7 @@ export const Entry: React.FC = () => {
                     </Form.Group>
                     <Form.Group as={Col}>
                         <Form.Label>Company</Form.Label>
-                        <Form.Control value={company} onChange={(e) => setCompany(e.target.value.toUpperCase())} />
+                        <Form.Control value={part.company} onChange={(e) => setPart({...part, company: e.target.value.toUpperCase()})} />
                     </Form.Group>
                 </Form.Row>
                 <Form.Row>
@@ -75,36 +99,42 @@ export const Entry: React.FC = () => {
                         <Form.Control value={part.id} onChange={(e) => setPart({ ...part, id: e.target.value })} onKeyDown={partKeyDown} />
                     </Form.Group>
                     <Form.Group as={Col}>
+                        <Form.Label>Quantity</Form.Label>
+                        <Form.Control readOnly disabled />
+                    </Form.Group>
+                </Form.Row>
+                <Form.Row>
+                    <Form.Group as={Col}>
+                        <Form.Label>Type</Form.Label>
+                        <Form.Control readOnly disabled />
+                    </Form.Group>
+                    <Form.Group as={Col}>
+                        <Form.Label></Form.Label>
+
+                    </Form.Group>
+                </Form.Row>
+                <Form.Row>
+                    <Form.Group as={Col}>
                         <Form.Label>Description</Form.Label>
-                        <Form.Control value={part.description} disabled={true} readOnly={true} />
+                        <Form.Control as="textarea" value={part.description} disabled={true} readOnly={true} />
+                    </Form.Group>
+                </Form.Row>
+                <Form.Row>
+                    <Form.Group as={Col}>
+                        <Button variant={isCheckIn ? "primary" : "outline-primary"} size="lg" block onClick={toggleMode}>Check In</Button>
+                    </Form.Group>
+                    <Form.Group as={Col}>
+                        <Button variant={isCheckIn ? "outline-primary" : "primary"} size="lg" block onClick={toggleMode}>Check Out</Button>
+                    </Form.Group>
+                </Form.Row>
+                <Form.Row>
+                    <Form.Group as={Col}>
+                        <Form.Label>Quantity</Form.Label>
+                        <Quantity value={adjustQuantity} onValueChange={(v) => setAdjustQuantity(v)} />
                     </Form.Group>
                 </Form.Row>
             </Form>
-            <Modal size="lg" aria-labelledby="contained-modal-title-vcenter" centered show={showModal}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Part Entry</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form id="partEntry">
-                        <Form.Row>
-                            <Form.Group as={Col}>
-                                <Form.Label>Description</Form.Label>
-                                <Form.Control as="textarea" value={part.description} onChange={(e) => setPart({ ...part, description: e.target.value })} />
-                            </Form.Group>
-                        </Form.Row>
-                    </Form>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button>
-                        Close
-                    </Button>
-                    <Button>
-                        Save
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+            <QuickPartEntry show={showModal} part={part} onSave={createPart} onClose={handleClose} />
         </Container>
-
-
     )
 }

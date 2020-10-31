@@ -1,20 +1,17 @@
-export interface FormState<T> { 
-    status: FormStatus, 
-    payload?: T, 
-    error?: Error
+export interface Part {
+    company: string,
+    id: string,
+    description: string,
+    typeCode: string
 }
 
-export enum FormStatus {
-    Error = 'error',
-    Loading = 'loading',
-    Loaded = 'loaded'
+export interface User {
+    username: string,
+    name: string
 }
 
-export interface Item {
-    barcodeNum: string,
-    name: string,
-    quantity: number,
-    location: string,
-    size: number,
-    uom: string
+export interface PartTran {
+    company: string,
+    partId: string,
+    adjustQuantity: number
 }

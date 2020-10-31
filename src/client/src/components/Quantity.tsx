@@ -6,33 +6,25 @@ interface QuantityProps {
     onValueChange: (value: number) => void | undefined
 }
 
-export class Quantity extends React.Component<QuantityProps, { value: number }> {
-    constructor(props: QuantityProps) {
-        super(props);
-        this.state = { value: this.props.value };
+export const Quantity: React.FC<QuantityProps> = ({ value, onValueChange }) => {
+
+    const addToInput = (num: number) => {
+        updateValue(0);
     }
 
-    render() {
-        return (
-            <InputGroup>
-                <InputGroup.Prepend>
-                    <Button variant="outline-secondary" onClick={() => this.addToInput(-1)}>-</Button>
-                </InputGroup.Prepend>
-                <Form.Control type="number" value={this.state.value} onChange={e => this.updateValue(+e.target.value)} />
-                <InputGroup.Append>
-                    <Button variant="outline-secondary" onClick={() => this.addToInput(1)}>+</Button>
-                </InputGroup.Append>
-            </InputGroup>
-        )
+    const updateValue = (newNum: number) => {
+        onValueChange(newNum);
     }
 
-    addToInput(num: number) {
-        const newValue = this.state.value + num;
-        this.updateValue(newValue);
-    }
-
-    updateValue(newNum: number) {
-        this.setState({ value: newNum });
-        this.props.onValueChange(newNum);
-    }
+    return (
+        <InputGroup>
+            <InputGroup.Prepend>
+                <Button variant="outline-secondary" onClick={() => addToInput(-1)}>-</Button>
+            </InputGroup.Prepend>
+            <Form.Control type="number" value={value} onChange={e => updateValue(+e.target.value)} />
+            <InputGroup.Append>
+                <Button variant="outline-secondary" onClick={() => addToInput(1)}>+</Button>
+            </InputGroup.Append>
+        </InputGroup>
+    )
 }

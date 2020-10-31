@@ -2,11 +2,9 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import { Route, Router } from 'react-router-dom';
 import { Form, FormControl, Nav, Navbar } from 'react-bootstrap';
-import QuickEntry from './QuickEntry';
 import { createBrowserHistory } from 'history';
 import { HttpClient } from './HttpClient';
 import { InventoryList } from './InventoryList';
-import { InventoryItem } from './InventoryItem';
 import { Entry } from './Entry';
 
 const history = createBrowserHistory();
@@ -28,6 +26,7 @@ class App extends React.Component<any, {value: string}> {
               <Nav className="mr-auto">
                 <Nav.Link href="/">Home</Nav.Link>
                 <Nav.Link href="/inventory">Inventory</Nav.Link>
+                <Nav.Link href="/entry">Entry</Nav.Link>
               </Nav>
               <Form inline onSubmit={this.handleSubmit}>
                 <FormControl type="text" placeholder="Quick Entry" className="mr-sm-2" onChange={this.handleOnChange} value={this.state.value} tabIndex={1} />
@@ -35,9 +34,7 @@ class App extends React.Component<any, {value: string}> {
             </Navbar.Collapse>
           </Navbar>
           <div>
-            <Route path="/quickentry/:barcode" component={QuickEntry}/>
             <Route path="/inventory" exact component={InventoryList} />
-            <Route path="/inventory/:barcodeNum" component={InventoryItem} />
             <Route path="/entry" component={Entry} />
           </div>
         </div>

@@ -8,5 +8,7 @@ namespace HomeInventory.Shared.Dtos
         public string Company { get; set; }
         [MaxLength(50)]
         public string Id { get; set; }
+        [MaxLength(255)]
+        public string Description { get; set; }
     }
 }

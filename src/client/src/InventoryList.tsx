@@ -1,17 +1,17 @@
 import React from "react";
 import { BaseListComponent } from "./BaseListComponent";
-import { Item } from "./InventoryTypes";
+import { Part } from "./InventoryTypes";
 
 
 
-export class InventoryList extends BaseListComponent<Item> {
+export class InventoryList extends BaseListComponent<Part> {
     constructor(props: {}) {
         super(props);
         this.onRowClick = this.onRowClick.bind(this);
     }
 
     componentDidMount() {
-        this.client.get<Item[]>("Inventory/items")
+        this.client.get<Part[]>("PartSvc/parts")
             .then(r => {
                 console.log(r);
                 if (r.ok) {
@@ -37,12 +37,11 @@ export class InventoryList extends BaseListComponent<Item> {
         this.navigateTo(`/inventory/${key}`);
     }
 
-    renderRow(item: Item) {
+    renderRow(part: Part) {
         return (
-            <tr key={item.barcodeNum} onClick={() => this.onRowClick(item.barcodeNum)}>
-                <td>{item.name}</td>
-                <td>{item.barcodeNum}</td>
-                <td>{item.quantity}</td>
+            <tr key={part.id} onClick={() => this.onRowClick(part.id)}>
+                <td>{part.description}</td>
+                <td>{part.id}</td>
             </tr>
         )
     }
