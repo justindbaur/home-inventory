@@ -3,9 +3,9 @@ import 'bootstrap/dist/css/bootstrap.css';
 import { Route, Router } from 'react-router-dom';
 import { Form, FormControl, Nav, Navbar } from 'react-bootstrap';
 import { createBrowserHistory } from 'history';
-import { HttpClient } from './HttpClient';
 import { InventoryList } from './InventoryList';
 import { Entry } from './Entry';
+import { LoginPage } from './LoginPage';
 
 const history = createBrowserHistory();
 
@@ -36,6 +36,7 @@ class App extends React.Component<any, {value: string}> {
           <div>
             <Route path="/inventory" exact component={InventoryList} />
             <Route path="/entry" component={Entry} />
+            <Route path="/login" component={LoginPage} />
           </div>
         </div>
       </Router>
@@ -46,7 +47,7 @@ class App extends React.Component<any, {value: string}> {
 
   handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    window.location.href = `${HttpClient.getFullHost()}/quickentry/${this.state.value}`;
+    
   }
 }
 

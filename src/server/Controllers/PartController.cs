@@ -1,8 +1,10 @@
 using System;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using HomeInventory.Contexts;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using HomeInventory.Shared.Entities;
 using HomeInventory.Shared.Dtos;
@@ -11,6 +13,7 @@ namespace HomeInventory.Controllers
 {
     [ApiController]
     [Route("api/PartSvc")]
+    [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme + "," + JwtBearerDefaults.AuthenticationScheme)]
     public class PartController : ControllerBase
     {
         private readonly MainDbContext db;
@@ -28,10 +31,10 @@ namespace HomeInventory.Controllers
             return Ok(parts);
         }
 
-        [HttpGet("Parts/({company},{id})")]
-        public async Task<IActionResult> GetPart(string company, string id)
+        [HttpGet("Parts/{id}")]
+        public async Task<IActionResult> GetPart(string id)
         {
-            var part = await db.Parts.FindAsync(company, id);
+            var part = await db.Parts.FindAsync(id);
 
             if (part == null)
             {
@@ -46,7 +49,6 @@ namespace HomeInventory.Controllers
         {
             var part = new Part
             {
-                Company = createPart.Company,
                 Id = createPart.Id,
                 Description = createPart.Description
             };
@@ -60,15 +62,15 @@ namespace HomeInventory.Controllers
 
             await db.SaveChangesAsync();
 
-            var createdPart = await db.Parts.FindAsync(part.Company, part.Id);
+            var createdPart = await db.Parts.FindAsync(part.Id);
 
-            return Created($"api/PartSvc/Parts/({part.Company},{part.Id})", createdPart);
+            return Created($"api/PartSvc/Parts/{part.Id})", createdPart);
         }
 
-        [HttpPatch("Parts/({company},{id})")]
-        public async Task<IActionResult> UpdatePart(string company, string id, EditPartDto editPart)
+        [HttpPatch("Parts/{id}")]
+        public async Task<IActionResult> UpdatePart(string id, EditPartDto editPart)
         {
-            var existingPart = await db.Parts.FindAsync(company, id);
+            var existingPart = await db.Parts.FindAsync(id);
 
             if (existingPart == null)
             {
@@ -85,10 +87,10 @@ namespace HomeInventory.Controllers
             return Ok(existingPart);
         }
 
-        [HttpDelete("Parts/({company},{id})")]
-        public async Task<IActionResult> DeletePart(string company, string id)
+        [HttpDelete("Parts/{id})")]
+        public async Task<IActionResult> DeletePart(string id)
         {
-            var existingPart = await db.Parts.FindAsync(company, id);
+            var existingPart = await db.Parts.FindAsync(id);
 
             if (existingPart == null)
             {

@@ -2,14 +2,14 @@ import React from 'react'
 import { Button, Form, InputGroup } from 'react-bootstrap'
 
 interface QuantityProps {
-    value: number,
+    value: number | undefined,
     onValueChange: (value: number) => void | undefined
 }
 
 export const Quantity: React.FC<QuantityProps> = ({ value, onValueChange }) => {
 
     const addToInput = (num: number) => {
-        updateValue(0);
+        updateValue(value || 0 + num);
     }
 
     const updateValue = (newNum: number) => {

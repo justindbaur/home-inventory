@@ -1,10 +1,12 @@
 using System;
 using HomeInventory.Shared.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace HomeInventory.Contexts
 {
-    public class MainDbContext : DbContext
+    public class MainDbContext : IdentityDbContext<ApplicationUser>
     {
         public MainDbContext(DbContextOptions<MainDbContext> options) : base(options)
         {
@@ -14,32 +16,37 @@ namespace HomeInventory.Contexts
 #nullable disable
         public DbSet<Part> Parts { get; set; }
         public DbSet<PartTran> PartTrans { get; set; }
-        public DbSet<User> Users { get; set; }
 #nullable enable
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.Entity<Part>()
-                .HasKey(p => new { p.Company, p.Id });
+            base.OnModelCreating(builder);
 
-            builder.Entity<PartTran>()
-                .HasKey(p => new { p.Company, p.TranId });
+            builder.Entity<Part>();
+
+            builder.Entity<PartTran>();
 
             builder.Entity<PartTran>()
                 .HasOne(p => p.Part)
-                .WithMany(p => p.PartTrans)
-                .HasForeignKey(p => new { p.Company, p.PartId });
+                .WithMany(p => p.PartTrans);
 
             builder.Entity<PartTran>()
                 .HasOne(p => p.EntryUser)
-                .WithMany(u => u.PartTrans)
-                .HasForeignKey(p => new { p.Company, p.EntryUserName });
+                .WithMany(u => u.PartTrans);
 
-            var userEntityBuilder = builder.Entity<User>();
-            userEntityBuilder.HasKey(u => new { u.Company, u.UserName });
-            userEntityBuilder.HasData(new[] 
+            builder.Entity<ApplicationUser>(b => 
             {
-                new User { Company = "HOME", UserName = "jdbaur" }
+                b.HasData(new[]
+                {
+                    new ApplicationUser
+                    {
+                        UserName = "jdbaur",
+                        NormalizedUserName = "JDBAUR",
+                        Email = "me@justinbaur.com",
+                        NormalizedEmail = "ME@JUSTINBAUR.COM",
+                        PasswordHash = new PasswordHasher<ApplicationUser>().HashPassword(null!, "jdbaur"),
+                    }
+                });
             });
         }
     }

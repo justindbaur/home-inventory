@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Col, Form, Modal } from 'react-bootstrap';
-import { Part } from './InventoryTypes';
+import { Part } from '../InventoryTypes';
 
 interface QuickPartEntryProps {
     part: Part;
@@ -12,8 +12,7 @@ interface QuickPartEntryProps {
 export const QuickPartEntry: React.FC<QuickPartEntryProps> = ({part, show, onSave, onClose}) => {
 
     const [statePart, setStatePart] = useState(part);
-
-
+    
     return (
         <Modal size="lg" aria-labelledby="contained-modal-title-vcenter" centered show={show} onHide={onClose}>
             <Modal.Header closeButton>

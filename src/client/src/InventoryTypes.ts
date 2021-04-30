@@ -1,5 +1,4 @@
 export interface Part {
-    company: string,
     id: string,
     description: string,
     typeCode: string
@@ -11,7 +10,6 @@ export interface User {
 }
 
 export interface PartTran {
-    company: string,
     partId: string,
     adjustQuantity: number
 }

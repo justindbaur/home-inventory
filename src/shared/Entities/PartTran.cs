@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HomeInventory.Shared.Entities
 {
-    public class PartTran : BaseEntity
+    public class PartTran
     {
         [Key]
         public Guid TranId { get; set; }
@@ -21,7 +21,7 @@ namespace HomeInventory.Shared.Entities
         [ForeignKey(nameof(EntryUser))]
         public string EntryUserName { get; set; }
 
-        public User EntryUser { get; set; }
+        public ApplicationUser EntryUser { get; set; }
 
 
         public decimal Adjustment { get; set; }

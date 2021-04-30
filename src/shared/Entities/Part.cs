@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HomeInventory.Shared.Entities
 {
-    public class Part : BaseEntity
+    public class Part
     {
         [Key]
         [MaxLength(50)]
